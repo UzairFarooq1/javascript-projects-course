@@ -6,6 +6,32 @@
     <title>Digital Clock</title>
 </head>
 <body>
-    
+    <div style="font-size: 100px; text-align: center;" id="DigitalClock"></div>
+    <script type="text/javascript">
+        function showTime(){
+        var currentDate = new Date();
+        
+        var h = currentDate.getHours();
+        var m = currentDate.getMinutes();
+        var s = currentDate.getSeconds();
+        var session = "AM";
+
+        m = m < 10 ? "0" + m : m;
+        s = s < 10 ? "0" + s : s;
+        if(h == 0){
+            h = 12;
+            session = "AM";
+        }
+        if(h > 12){
+            h -= 12;
+            session = "PM";
+        }
+
+        document.getElementById("DigitalClock").innerHTML = h +  ":" + m + ":" + s +  " " + session;
+
+        setTimeout(showTime,1000);
+        }
+        showTime();
+    </script>    
 </body>
 </html>
