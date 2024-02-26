@@ -4,8 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main</title>
+
+    <style>
+        body {
+            background: #333;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #Projects {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        button {
+            font-size: 3rem;
+            color: azure;
+            letter-spacing: 1px;
+            padding: 10px;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            background: linear-gradient(to right, #444, #222);
+            cursor: pointer;
+            transition: background 0.5s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #222, #444);
+            color: #919191;
+        }
+    </style>
 </head>
 <body>
-    
+    <div id="Projects">
+        <a href="digitalclock.html">
+        <button > Digital clock</button>
+        </a>
+        <button>Calculator</button>
+        <button>To-Do List</button>
+    </div>
 </body>
 </html>
