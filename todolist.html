@@ -3,33 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/65f0559495.js" crossorigin="anonymous"></script>
+
     <title>To Do List App</title>
+    <style>
+        body {
+            background: #333;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 400px;
+            margin: auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-bottom: 2px solid #fff;
+            background: transparent;
+            color: white;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        input[type="button"] {
+            width: 50%;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+            cursor: pointer;
+            background: linear-gradient(to right, #444, #222);
+            color: white;
+            transition: background 0.5s ease;
+            outline: none;
+        }
+
+        input[type="button"]:hover {
+            background: linear-gradient(to right, #222, #444);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #fff;
+            transition: background 0.5s ease;
+        }
+
+        li:hover {
+            background: rgba(165, 164, 164, 0.1);
+        }
+
+        button {
+            background: linear-gradient(to right, #e44d26, #f16529);
+            color: white;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            transition: background 0.5s ease;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #f16529, #e44d26);
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: #aaaaaa;
+        }
+        .back-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 24px;
+        }
+
+    </style>
 </head>
 <body>
+    <a href="main.html" class="back-icon"><i class="fa-solid fa-arrow-left"></i></a>
     <div class="container">
-        <h1 class="row">TO DO LIST</h1>
+        <h1>To-Do List</h1>
         <br>
-        <div class="row">
-            <form action="">
-                <div class="input-group">
-                    <input type="text" id="box" placeholder="Enter task here..." style="width: 30vw;">
-                </div>
-                <br>
-                <div class="form-group">
-                    <input type="button" value="Add" style="width: 15vw;" onclick="add_item()">
-                </div>
-            </form>
-        </div>
-        <div class="row">
-            <ul id="list_items"></ul>
-        </div>
+        <form action="">
+            <div class="input-group">
+                <input type="text" id="box" placeholder="Enter task here...">
+            </div>
+            <br>
+            <div class="form-group">
+                <input type="button" value="Add" onclick="add_item()">
+            </div>
+        </form>
+        <ul id="list_items"></ul>
     </div>
     <script type="text/javascript">
+        // Load items from local storage on page load
+        window.onload = loadItems;
+
         function add_item(){
             let item = document.getElementById("box");
             let itemList = document.getElementById("list_items");
-
             
+            if(item.value == ""){
+                alert("Please enter a valid task!");
+                return;
+            } 
+
+            let newItem = document.createElement("li");
+            newItem.appendChild(document.createTextNode(item.value));
+
+            let buttonsContainer = document.createElement('div');
+
+            let completedBtn = document.createElement('button');
+            completedBtn.innerHTML = "Completed";
+            completedBtn.onclick = function () { mark_completed(newItem) };
+            buttonsContainer.appendChild(completedBtn);
+
+            let delBtn = document.createElement('button');
+            delBtn.innerHTML = "Delete";
+            delBtn.onclick = function () { remove_item(newItem) };
+            buttonsContainer.appendChild(delBtn);
+
+            newItem.appendChild(buttonsContainer);
+
+            itemList.appendChild(newItem);
+            item.value = "";
+
+            // Save items to local storage
+            saveItems();
+        }
+
+        function mark_completed(item){
+            item.classList.toggle('completed');
+            // Save items to local storage
+            saveItems();
+        }
+
+        function remove_item(item){
+            item.remove();
+            // Save items to local storage
+            saveItems();
+        }
+
+        function saveItems() {
+            let items = [];
+
+            let itemList = document.getElementById("list_items");
+            let listItems = itemList.getElementsByTagName("li");
+
+            for (let i = 0; i < listItems.length; i++) {
+                let itemText = listItems[i].childNodes[0].nodeValue.trim(); // Get text content
+                let itemCompleted = listItems[i].classList.contains('completed');
+
+                let item = {
+                    text: itemText,
+                    completed: itemCompleted
+                };
+
+                items.push(item);
+            }
+
+            localStorage.setItem('todoItems', JSON.stringify(items));
+        }
+
+        function loadItems() {
+            let items = localStorage.getItem('todoItems');
+            if (items) {
+                items = JSON.parse(items);
+
+                let itemList = document.getElementById("list_items");
+                itemList.innerHTML = '';
+
+                for (let i = 0; i < items.length; i++) {
+                    let newItem = document.createElement("li");
+                    newItem.appendChild(document.createTextNode(items[i].text));
+
+                    let buttonsContainer = document.createElement('div');
+
+                    let completedBtn = document.createElement('button');
+                    completedBtn.innerHTML = "Completed";
+                    completedBtn.onclick = function () { mark_completed(newItem) };
+                    buttonsContainer.appendChild(completedBtn);
+
+                    let buttonsContainer1 = document.createElement('div');
+                    buttonsContainer.appendChild(document.createTextNode(' '));
+
+
+                    let delBtn = document.createElement('button');
+                    delBtn.innerHTML = "Delete";
+                    delBtn.onclick = function () { remove_item(newItem) };
+                    buttonsContainer.appendChild(delBtn);
+
+                    newItem.appendChild(buttonsContainer);
+
+                    if (items[i].completed) {
+                        newItem.classList.add('completed');
+                    }
+
+                    itemList.appendChild(newItem);
+                }
+            }
         }
     </script>
 </body>
